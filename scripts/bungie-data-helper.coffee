@@ -46,7 +46,7 @@ class DataHelper
     nodeFields = @buildFields(filtered, item.nodeDefs)
     text = @buildText(filtered, item.nodeDefs)
     formattedText = for column, string of text
-      string
+      string.slice(0, -3)
 
     fallback: item.itemDescription
     title: item.itemName
@@ -120,7 +120,7 @@ class DataHelper
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
       column = nodeDefs[node.nodeIndex].column
       text[column] = "" unless text[column]
-      text[column]+= "#{step.nodeStepName} "
+      text[column]+= "#{step.nodeStepName} | "
 
     setText node for node in nodes
     return text
