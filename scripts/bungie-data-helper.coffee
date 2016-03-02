@@ -84,7 +84,8 @@ class DataHelper
   'filterNodes': (nodes, nodeDefs) ->
     validNodes = []
     invalid = (node) ->
-      node.stateId is "Invalid" or node.hidden is true
+      name = nodeDefs[node.nodeIndex].steps[node.stepIndex].nodeStepName
+      node.stateId is "Invalid" or node.hidden is true or name is "Upgrade Damage"
 
     validNodes.push node for node in nodes when not invalid(node)
 
