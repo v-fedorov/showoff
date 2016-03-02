@@ -45,12 +45,14 @@ class DataHelper
     filtered = @filterNodes(item.nodes, item.nodeDefs)
     nodeFields = @buildFields(filtered, item.nodeDefs)
     text = @buildText(filtered, item.nodeDefs)
+    formattedText = for column, string of text
+      string
 
     fallback: item.itemDescription
     title: item.itemName
     title_link: item.itemLink
     color: item.color
-    text: text
+    text: formattedText.join('\n')
     thumb_url: item.iconLink
     fields: nodeFields
 
@@ -113,24 +115,15 @@ class DataHelper
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
       return step.nodeStepName
 
-    text = []
-    count = 0
-    column = 0
-    idx = 0
-    while count < nodes.length
-      columnText = ""
-      while idx < nodes.length
-        node = nodes[idx]
-        step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
-        nodeColumn = nodeDefs[node.nodeIndex].column
-        if nodeColumn is column
-          columnText += "#{step.nodeStepName} "
-          count++
-        idx++
-      text.push(columnText)
-      column++
+    text = {}
+    setText = (node) ->
+      step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
+      column = nodeDefs[node.nodeIndex].column
+      text[column] = "" unless text[column]
+      text[column]+= step.nodeStepName
 
-    return text.join("\n")
+    setText node for node in nodes
+    return text
 
   'fetchVendorDefs': (callback) ->
     options =
