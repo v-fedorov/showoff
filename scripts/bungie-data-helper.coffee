@@ -81,10 +81,10 @@ class DataHelper
       return if invalid
 
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
-      icon = step.icon
+      description = step.nodeStepDescription.replace(/(\r\n|\n|\r)/gm," ")
 
       title: step.nodeStepName
-      value: "<img src=#{icon} style='height:20px;width:20px;background-color:#EEEEEE' />"
+      value: description
       short: true
 
     displayNodes.filter (x) -> x
