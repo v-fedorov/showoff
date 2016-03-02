@@ -14,7 +14,6 @@ module.exports = (robot) ->
     # default to slack username if only 2 inputs
     if input.length is 2
       input.unshift(res.message.user.name)
-      res.reply "Searching accounts matching your slack username: #{input[0]}. You can also specify an account name by entering it at the beginning of the command."
 
     # some validations
     unless input[1].toLowerCase() in ['xbox', 'playstation']
@@ -28,7 +27,7 @@ module.exports = (robot) ->
     data = generateInputHash(input)
 
     getPlayerId(res, data.membershipType, data.displayName).then (playerId) ->
-      res.send "Fetching stats for #{data.displayName}'s #{data.weaponSlot} weapon..."
+      res.send "Fetching stats for #{data.displayName}'s #{input[2]} weapon..."
       getCharacterId(res, data.membershipType, playerId).then (characterId) ->
         getItemIdFromSummary(res, data.membershipType, playerId, characterId, data.weaponSlot).then (itemInstanceId) ->
           getItemDetails(res, data.membershipType, playerId, characterId, itemInstanceId).then (item) ->

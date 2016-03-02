@@ -42,7 +42,8 @@ class DataHelper
   'parseItemAttachment': (item) ->
     hasStats = item.stats
     statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
-    nodeFields = @buildNodes(item.nodes, item.nodeDefs)
+    filtered = @filterNodes(item.nodes, item.nodeDefs)
+    nodeFields = @buildNodes(filtered, item.nodeDefs)
 
     fallback: item.itemDescription
     title: item.itemName
@@ -75,11 +76,28 @@ class DataHelper
 
     foundStats.filter (x) -> x
 
+  #
+  'filterNodes': (nodes, nodeDefs) ->
+    validNodes = []
+    invalid = (node) ->
+      node.stateId is "Invalid" or node.hidden is true
+
+    validNodes.push node for node in nodes when not invalid(node)
+
+    orderedNodes = []
+    column = 0
+    while orderedNodes.length < validNodes.length
+      idx = 0
+      while idx < validNodes.length
+        node = validNodes[idx]
+        nodeColumn = nodeDefs[node.nodeIndex].column
+        orderedNodes.push(node) if nodeColumn is column
+        idx++
+      column++
+    return orderedNodes
+
   'buildNodes': (nodes, nodeDefs) ->
     displayNodes = nodes.map (node) ->
-      invalid = node.stateId is "Invalid" or node.hidden is true
-      return if invalid
-
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
       description = step.nodeStepDescription.replace(/(\r\n|\n|\r)/gm," ").replace("  "," ")
 
