@@ -7,7 +7,7 @@ class DataHelper
     @fetchVendorDefs (error, response, body) =>
       @vendorDefs = JSON.parse(body)
 
-  'serializeFromApi': (response) ->
+  'serializeFromApi': (item, defs) ->
     rarityColor =
       Uncommon: '#f5f5f5'
       Common: '#2f6b3c'
@@ -15,25 +15,22 @@ class DataHelper
       Legendary: '#4e3263'
       Exotic: '#ceae32'
 
-    item = response.data.item
     hash = item.itemHash
-    itemDefs = response.definitions.items[hash]
-    nodes = response.data.talentNodes
+    defData = defs[hash]
 
     prefix = 'http://www.bungie.net'
     iconSuffix = defData.icon
     itemSuffix = '/en/Armory/Detail?item='+hash
 
-    itemName: itemDefs.itemName
-    itemDescription: itemDefs.itemDescription
-    itemTypeName: itemDefs.itemTypeName
-    rarity: itemDefs.tierTypeName
-    color: rarityColor[itemDefs.tierTypeName]
+    itemName: defData.itemName
+    itemDescription: defData.itemDescription
+    itemTypeName: defData.itemTypeName
+    rarity: defData.tierTypeName
+    color: rarityColor[defData.tierTypeName]
     iconLink: prefix + iconSuffix
     itemLink: prefix + itemSuffix
     primaryStat: item.primaryStat
     stats: item.stats
-
 
   'parseItemsForAttachment': (items) ->
     items.map (item) => @parseItemAttachment(item)
@@ -90,3 +87,7 @@ class DataHelper
     request(options, callback)
 
 module.exports = DataHelper
+
+
+
+

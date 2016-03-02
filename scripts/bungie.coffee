@@ -112,7 +112,8 @@ getItemDetails = (bot, membershipType, playerId, characterId, itemInstanceId) ->
   params = 'definitions=true'
 
   callback = (response) ->
-    item = dataHelper.serializeFromApi(response)
+    definitions = response.definitions.items
+    item = dataHelper.serializeFromApi(response.data.item, definitions)
 
     deferred.resolve(item)
 
