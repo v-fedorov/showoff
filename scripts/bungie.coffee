@@ -49,7 +49,7 @@ module.exports = (robot) ->
 # takes an input (array) and returns a hash
 generateInputHash = (input) ->
   network = if input[1] is 'xbox' then '1' else '2'
-  input[0].replace("_", " ") if network is '1'
+  name = if network is '1' then input[0].replace("_", " ") else input[0]
   if input[2] is 'primary'
     wpnSlot = 1
   else if input[2] is 'special'
@@ -59,7 +59,7 @@ generateInputHash = (input) ->
 
   return {
     membershipType: network,
-    displayName: input[0],
+    displayName: name,
     weaponSlot: wpnSlot
   }
 
