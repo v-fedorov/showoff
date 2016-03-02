@@ -28,6 +28,7 @@ module.exports = (robot) ->
     data = generateInputHash(input)
 
     getPlayerId(res, data.membershipType, data.displayName).then (playerId) ->
+      res.send "Fetching stats for #{data.displayName}'s #{data.weaponSlot} weapon..."
       getCharacterId(res, data.membershipType, playerId).then (characterId) ->
         getItemIdFromSummary(res, data.membershipType, playerId, characterId, data.weaponSlot).then (itemInstanceId) ->
           getItemDetails(res, data.membershipType, playerId, characterId, itemInstanceId).then (item) ->
@@ -72,7 +73,6 @@ getPlayerId = (bot, membershipType, displayName) ->
       return
 
     playerId = foundData.membershipId
-    bot.send "Found playerId: #{playerId}"
     deferred.resolve(playerId)
 
   deferred.promise
@@ -87,7 +87,6 @@ getCharacterId = (bot, membershipType, playerId) ->
     character = data.characters[0]
 
     characterId = character.characterBase.characterId
-    bot.send "Got characterId: #{characterId}"
     deferred.resolve(characterId)
 
   deferred.promise
@@ -100,7 +99,6 @@ getItemIdFromSummary = (bot, membershipType, playerId, characterId, weaponSlot) 
   makeRequest bot, endpoint, (response) ->
     data = response.data
     itemInstanceId = data.items[weaponSlot].itemId
-    bot.send "Got itemInstanceId: #{itemInstanceId}"
     deferred.resolve(itemInstanceId)
 
   deferred.promise

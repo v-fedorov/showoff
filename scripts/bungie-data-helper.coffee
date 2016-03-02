@@ -81,7 +81,7 @@ class DataHelper
       return if invalid
 
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
-      description = step.nodeStepDescription.replace(/(\r\n|\n|\r)/gm," ")
+      description = step.nodeStepDescription.replace(/(\r\n|\n|\r)/gm," ").replace("  "," ")
 
       title: step.nodeStepName
       value: description
