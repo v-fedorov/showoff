@@ -19,9 +19,10 @@ class DataHelper
     hash = item.itemHash
     itemDefs = response.definitions.items[hash]
     nodes = response.data.talentNodes
+    nodeDefs = response.definitions.talentGrids[item.talentGridHash].nodes
 
     prefix = 'http://www.bungie.net'
-    iconSuffix = defData.icon
+    iconSuffix = itemDefs.icon
     itemSuffix = '/en/Armory/Detail?item='+hash
 
     itemName: itemDefs.itemName
