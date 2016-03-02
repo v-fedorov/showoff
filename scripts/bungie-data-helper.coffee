@@ -84,7 +84,7 @@ class DataHelper
       icon = step.icon
 
       title: step.nodeStepName
-      value: "<img src=#{icon} style='height:20px;width:20px;background-color:#EEEEEE'"
+      value: "<img src=#{icon} style='height:20px;width:20px;background-color:#EEEEEE' />"
       short: true
 
     displayNodes.filter (x) -> x
