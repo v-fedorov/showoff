@@ -18,8 +18,6 @@ class DataHelper
     item = response.data.item
     hash = item.itemHash
     itemDefs = response.definitions.items[hash]
-    nodes = response.data.talentNodes
-    nodeDefs = response.definitions.talentGrids[item.talentGridHash].nodes
 
     prefix = 'http://www.bungie.net'
     iconSuffix = itemDefs.icon
@@ -34,6 +32,8 @@ class DataHelper
     itemLink: prefix + itemSuffix
     primaryStat: item.primaryStat
     stats: item.stats
+    nodes: response.data.talentNodes
+    nodeDefs: response.definitions.talentGrids[item.talentGridHash].nodes
 
 
   'parseItemsForAttachment': (items) ->
@@ -42,6 +42,7 @@ class DataHelper
   'parseItemAttachment': (item) ->
     hasStats = item.stats
     statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
+    nodeFields = @buildNodes(item.nodes, item.nodeDefs)
 
     fallback: item.itemDescription
     title: item.itemName
@@ -49,7 +50,7 @@ class DataHelper
     color: item.color
     text: item.itemDescription
     thumb_url: item.iconLink
-    fields: statFields
+    fields: nodeFields
 
   'buildStats': (statsData, primaryData) ->
     defs = @statDefs
@@ -73,6 +74,21 @@ class DataHelper
       foundStats.unshift(primaryStat)
 
     foundStats.filter (x) -> x
+
+  'buildNodes': (nodes, nodeDefs) ->
+    displayNodes = nodes.map (node) ->
+      invalid = node.stateId is "Invalid" or node.hidden is true
+      return if invalid
+
+      step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
+      icon = step.icon
+
+      title: step.nodeStepName
+      value: "<img src=#{icon} style='height:20px;width:20px;background-color:#EEEEEE'"
+      short: true
+
+    displayNodes.filter (x) -> x
+
 
   'fetchVendorDefs': (callback) ->
     options =
