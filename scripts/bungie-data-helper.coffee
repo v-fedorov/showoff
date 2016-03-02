@@ -39,13 +39,14 @@ class DataHelper
   'parseItemsForAttachment': (items) ->
     items.map (item) => @parseItemAttachment(item)
 
-  'parseItemAttachment': (item) ->
+  'parseItemAttachment': (item, showDetails) ->
     hasStats = item.stats
     statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
     filtered = @filterNodes(item.nodes, item.nodeDefs)
     nodeFields = @buildFields(filtered, item.nodeDefs)
-    text = @buildText(filtered, item.nodeDefs)
-    formattedText = for column, string of text
+    textHash = @buildText(filtered, item.nodeDefs)
+    formattedText = for column, string of textHash
+      # removes trailing " | " from each line
       string.slice(0, -3)
 
     fallback: item.itemDescription
@@ -54,7 +55,7 @@ class DataHelper
     color: item.color
     text: formattedText.join('\n')
     thumb_url: item.iconLink
-    fields: nodeFields
+    fields: nodeFields if showDetails is true
 
   'buildStats': (statsData, primaryData) ->
     defs = @statDefs
@@ -79,7 +80,7 @@ class DataHelper
 
     foundStats.filter (x) -> x
 
-  #
+  # removes invalid nodes, orders according to column attribute
   'filterNodes': (nodes, nodeDefs) ->
     validNodes = []
     invalid = (node) ->
@@ -99,6 +100,7 @@ class DataHelper
       column++
     return orderedNodes
 
+  # creates fields for perks and their descriptions
   'buildFields': (nodes, nodeDefs) ->
     displayNodes = nodes.map (node) ->
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]

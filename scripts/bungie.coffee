@@ -10,6 +10,7 @@ module.exports = (robot) ->
   # executes when any text is directed at the bot
   robot.respond /(.*)/i, (res) ->
     input = res.match[1].split ' '
+    showDetails = false
 
     # default to slack username if only 2 inputs
     if input.length is 2
@@ -20,6 +21,11 @@ module.exports = (robot) ->
       res.reply "Please use 'xbox' or 'playstation' as your network."
       return
 
+    unless input[2].indexOf('-') is -1
+      idx = input[2].indexOf('-')
+      modifier = input[2].slice(idx)
+      input[2] = input[2].slice(0, idx)
+      showDetails = true if modifier is "-details"
     unless input[2].toLowerCase() in ['primary', 'special', 'heavy']
       res.reply "Please use 'primary', 'special', or 'heavy' for the weapon slot."
       return
@@ -31,7 +37,7 @@ module.exports = (robot) ->
       getCharacterId(res, data.membershipType, playerId).then (characterId) ->
         getItemIdFromSummary(res, data.membershipType, playerId, characterId, data.weaponSlot).then (itemInstanceId) ->
           getItemDetails(res, data.membershipType, playerId, characterId, itemInstanceId).then (item) ->
-            parsedItem = dataHelper.parseItemAttachment(item)
+            parsedItem = dataHelper.parseItemAttachment(item, showDetails)
 
             payload =
               message: res.message
