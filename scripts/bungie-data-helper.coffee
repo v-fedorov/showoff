@@ -43,13 +43,14 @@ class DataHelper
     hasStats = item.stats
     statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
     filtered = @filterNodes(item.nodes, item.nodeDefs)
-    nodeFields = @buildNodes(filtered, item.nodeDefs)
+    nodeFields = @buildFields(filtered, item.nodeDefs)
+    text = @buildText(filtered, item.nodeDefs)
 
     fallback: item.itemDescription
     title: item.itemName
     title_link: item.itemLink
     color: item.color
-    text: item.itemDescription
+    text: text
     thumb_url: item.iconLink
     fields: nodeFields
 
@@ -96,7 +97,7 @@ class DataHelper
       column++
     return orderedNodes
 
-  'buildNodes': (nodes, nodeDefs) ->
+  'buildFields': (nodes, nodeDefs) ->
     displayNodes = nodes.map (node) ->
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
       description = step.nodeStepDescription.replace(/(\r\n|\n|\r)/gm," ").replace("  "," ")
@@ -107,6 +108,29 @@ class DataHelper
 
     displayNodes.filter (x) -> x
 
+  'buildText': (nodes, nodeDefs) ->
+    getName = (node) ->
+      step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
+      return step.nodeStepName
+
+    text = []
+    count = 0
+    column = 0
+    idx = 0
+    while count < nodes.length
+      columnText = ""
+      while idx < nodes.length
+        node = nodes[idx]
+        step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
+        nodeColumn = nodeDefs[node.nodeIndex].column
+        if nodeColumn is column
+          columnText += "#{step.nodeStepName} "
+          count++
+        idx++
+      text.push(columnText)
+      column++
+
+    return text.join("\n")
 
   'fetchVendorDefs': (callback) ->
     options =
