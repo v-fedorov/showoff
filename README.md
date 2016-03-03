@@ -5,10 +5,10 @@ This project was based heavily off of [slack-destiny-bot](https://github.com/cpr
 
 ### Usage
 
-Showoff only requires 3 inputs, directed at the bot (order does matter):
-1. XBL/PSN gamertag
-2. console network ("xbox" or "playstation")
-3. weapon slot ("primary", "special", "heavy").  
+Showoff only requires 3 inputs, directed at the bot (order does matter):  
+* XBL/PSN gamertag
+* console network ("xbox" or "playstation")
+* weapon slot ("primary", "special", "heavy").  
 
 The standard usage looks like this:  
 >@bot-name MyGamertag xbox primary  
@@ -24,7 +24,7 @@ If your slack **username** (not first/last name) is the same as your gamertag, y
 If you would like showoff to also display the perk descriptions, add "-details" to the request right after the weaponslot.  
 >@bot-name MyPSNID playstation primary-details  
 
-This will result will look like this:  
+The result will look like this:  
 ![image](https://cloud.githubusercontent.com/assets/11082871/13480844/b589bcba-e0ae-11e5-897c-27ade3e4726e.png)  
 
 ### Caveats
