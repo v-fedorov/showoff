@@ -34,6 +34,8 @@ class DataHelper
     stats: item.stats
     nodes: response.data.talentNodes
     nodeDefs: response.definitions.talentGrids[item.talentGridHash].nodes
+    damageType: item.damageTypeHash
+    damageDefs: response.definitions.damageTypes
 
 
   'parseItemsForAttachment': (items) ->
@@ -42,6 +44,7 @@ class DataHelper
   'parseItemAttachment': (item, showDetails) ->
     hasStats = item.stats
     statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
+    damageEmoji = @emojiFromDamageType(item)
     filtered = @filterNodes(item.nodes, item.nodeDefs)
     nodeFields = @buildFields(filtered, item.nodeDefs)
     textHash = @buildText(filtered, item.nodeDefs)
@@ -50,7 +53,7 @@ class DataHelper
       string.slice(0, -3)
 
     fallback: item.itemDescription
-    title: "#{item.itemName}"
+    title: "#{item.itemName} #{damageEmoji}"
     title_link: item.itemLink
     color: item.color
     text: formattedText.join('\n')
@@ -79,6 +82,18 @@ class DataHelper
       foundStats.unshift(primaryStat)
 
     foundStats.filter (x) -> x
+
+  # returns emoji based on damage type for use in title
+  'emojiFromDamageType': (item) ->
+    arcEmoji = ':bladedancer:'
+    solarEmoji = ':firebolt:'
+    voidEmoji = ':voidwalker:'
+
+    damageType = item.damageDefs[item.damageType].damageTypeName
+    switch damageType
+      when "Arc" then arcEmoji
+      when "Solar" then solarEmoji
+      when "Void" then voidEmoji
 
   # removes invalid nodes, orders according to column attribute
   'filterNodes': (nodes, nodeDefs) ->
