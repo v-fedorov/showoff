@@ -94,6 +94,7 @@ class DataHelper
       when "Arc" then arcEmoji
       when "Solar" then solarEmoji
       when "Void" then voidEmoji
+      else  ""
 
   # removes invalid nodes, orders according to column attribute
   'filterNodes': (nodes, nodeDefs) ->
