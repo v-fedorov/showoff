@@ -50,7 +50,7 @@ class DataHelper
       string.slice(0, -3)
 
     fallback: item.itemDescription
-    title: item.itemName
+    title: "#{item.itemName} + :firebolt:"
     title_link: item.itemLink
     color: item.color
     text: formattedText.join('\n')
