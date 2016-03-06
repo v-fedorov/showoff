@@ -34,6 +34,8 @@ class DataHelper
     stats: item.stats
     nodes: response.data.talentNodes
     nodeDefs: response.definitions.talentGrids[item.talentGridHash].nodes
+    damageType: item.damageTypeHash
+    damageDefs: response.definitions.damageTypes
 
 
   'parseItemsForAttachment': (items) ->
@@ -42,6 +44,7 @@ class DataHelper
   'parseItemAttachment': (item, showDetails) ->
     hasStats = item.stats
     statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
+    damageEmoji = @emojiFromDamageType(item)
     filtered = @filterNodes(item.nodes, item.nodeDefs)
     nodeFields = @buildFields(filtered, item.nodeDefs)
     textHash = @buildText(filtered, item.nodeDefs)
@@ -50,7 +53,7 @@ class DataHelper
       string.slice(0, -3)
 
     fallback: item.itemDescription
-    title: item.itemName
+    title: "#{item.itemName} #{damageEmoji}"
     title_link: item.itemLink
     color: item.color
     text: formattedText.join('\n')
@@ -80,12 +83,26 @@ class DataHelper
 
     foundStats.filter (x) -> x
 
+  # returns emoji based on damage type for use in title
+  'emojiFromDamageType': (item) ->
+    arcEmoji = ':bladedancer:'
+    solarEmoji = ':firebolt:'
+    voidEmoji = ':voidwalker:'
+
+    damageType = item.damageDefs[item.damageType].damageTypeName
+    switch damageType
+      when "Arc" then arcEmoji
+      when "Solar" then solarEmoji
+      when "Void" then voidEmoji
+      else  ""
+
   # removes invalid nodes, orders according to column attribute
   'filterNodes': (nodes, nodeDefs) ->
     validNodes = []
     invalid = (node) ->
       name = nodeDefs[node.nodeIndex].steps[node.stepIndex].nodeStepName
-      node.stateId is "Invalid" or node.hidden is true or name is "Upgrade Damage"
+      skip = ["Upgrade Damage", "Void Damage", "Solar Damage", "Arc Damage", "Kinetic Damage"]
+      node.stateId is "Invalid" or node.hidden is true or name in skip
 
     validNodes.push node for node in nodes when not invalid(node)
 
