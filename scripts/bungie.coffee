@@ -33,7 +33,6 @@ module.exports = (robot) ->
     data = generateInputHash(input)
 
     getPlayerId(res, data.membershipType, data.displayName).then (playerId) ->
-      res.send "Fetching stats for #{data.displayName}'s #{input[2]} weapon..."
       getCharacterId(res, data.membershipType, playerId).then (characterId) ->
         getItemIdFromSummary(res, data.membershipType, playerId, characterId, data.weaponSlot).then (itemInstanceId) ->
           getItemDetails(res, data.membershipType, playerId, characterId, itemInstanceId).then (item) ->
