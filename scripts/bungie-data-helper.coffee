@@ -8,16 +8,23 @@ class DataHelper
       @vendorDefs = JSON.parse(body)
 
   'serializeFromApi': (response) ->
-    rarityColor =
-      Uncommon: '#f5f5f5'
-      Common: '#2f6b3c'
-      Rare: '#557f9e'
-      Legendary: '#4e3263'
-      Exotic: '#ceae32'
+    # rarityColor =
+    #   Uncommon: '#f5f5f5'
+    #   Common: '#2f6b3c'
+    #   Rare: '#557f9e'
+    #   Legendary: '#4e3263'
+    #   Exotic: '#ceae32'
+
+    damageColor =
+      Kinetic: '#d9d9d9'
+      Arc: '#80b3ff'
+      Solar: '#e68a00'
+      Void: '#400080'
 
     item = response.data.item
     hash = item.itemHash
     itemDefs = response.definitions.items[hash]
+    damageTypeName = response.definitions.damageTypes[item.damageTypeHash].damageTypeName
 
     prefix = 'http://www.bungie.net'
     iconSuffix = itemDefs.icon
@@ -27,24 +34,23 @@ class DataHelper
     itemDescription: itemDefs.itemDescription
     itemTypeName: itemDefs.itemTypeName
     rarity: itemDefs.tierTypeName
-    color: rarityColor[itemDefs.tierTypeName]
+    color: damageColor[damageTypeName] or '#d9d9d9'
     iconLink: prefix + iconSuffix
     itemLink: prefix + itemSuffix
     primaryStat: item.primaryStat
     stats: item.stats
     nodes: response.data.talentNodes
     nodeDefs: response.definitions.talentGrids[item.talentGridHash].nodes
-    damageType: item.damageTypeHash
-    damageDefs: response.definitions.damageTypes
-
+    damageType: damageTypeName
 
   'parseItemsForAttachment': (items) ->
     items.map (item) => @parseItemAttachment(item)
 
   'parseItemAttachment': (item, showDetails) ->
     hasStats = item.stats
+    name = "#{item.itemName}"
+    name+= " [#{item.damageType}]" unless item.damageType is "Kinetic"
     statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
-    damageEmoji = @emojiFromDamageType(item)
     filtered = @filterNodes(item.nodes, item.nodeDefs)
     nodeFields = @buildFields(filtered, item.nodeDefs)
     textHash = @buildText(filtered, item.nodeDefs)
@@ -53,7 +59,7 @@ class DataHelper
       string.slice(0, -3)
 
     fallback: item.itemDescription
-    title: "#{item.itemName} #{damageEmoji}"
+    title: name
     title_link: item.itemLink
     color: item.color
     text: formattedText.join('\n')
@@ -82,19 +88,6 @@ class DataHelper
       foundStats.unshift(primaryStat)
 
     foundStats.filter (x) -> x
-
-  # returns emoji based on damage type for use in title
-  'emojiFromDamageType': (item) ->
-    arcEmoji = ':bladedancer:'
-    solarEmoji = ':firebolt:'
-    voidEmoji = ':voidwalker:'
-
-    damageType = item.damageDefs[item.damageType].damageTypeName
-    switch damageType
-      when "Arc" then arcEmoji
-      when "Solar" then solarEmoji
-      when "Void" then voidEmoji
-      else  ""
 
   # removes invalid nodes, orders according to column attribute
   'filterNodes': (nodes, nodeDefs) ->
