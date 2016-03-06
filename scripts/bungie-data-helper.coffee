@@ -50,7 +50,7 @@ class DataHelper
       string.slice(0, -3)
 
     fallback: item.itemDescription
-    title: "#{item.itemName} + :firebolt:"
+    title: "#{item.itemName}"
     title_link: item.itemLink
     color: item.color
     text: formattedText.join('\n')
@@ -85,7 +85,8 @@ class DataHelper
     validNodes = []
     invalid = (node) ->
       name = nodeDefs[node.nodeIndex].steps[node.stepIndex].nodeStepName
-      node.stateId is "Invalid" or node.hidden is true or name is "Upgrade Damage"
+      skip = ["Upgrade Damage", "Void Damage", "Solar Damage", "Arc Damage", "Kinetic Damage"]
+      node.stateId is "Invalid" or node.hidden is true or name in skip
 
     validNodes.push node for node in nodes when not invalid(node)
 
