@@ -10,33 +10,33 @@ module.exports = (robot) ->
   # executes when any text is directed at the bot
   robot.respond /(.*)/i, (res) ->
     input = res.match[1].split ' '
-    showDetails = false
 
-    # default to slack username if only 2 inputs
+    # tries to make sense of various combinations of 2 inputs
     if input.length is 2
-      input.unshift(res.message.user.name)
+      xbox = ['xbox', 'xb1', 'xbox1', 'xboxone', 'xbox360', 'xb360', 'xbone']
+      playstation = ['playstation', 'ps', 'ps3', 'ps4', 'playstation3', 'playstation4']
+      sanitized = input[0].toLowerCase().replace(" ", "")
+      if sanitized in xbox
+        input[0] = 'xbox'
+        input.unshift(res.message.user.name)
+      else if sanitized in playstation
+        input[0] = 'playstation'
+        input.unshift(res.message.user.name)
+      else
+        robot.send {room: res.message.user.name, "unfurl_media": false}, "Something went wrong... Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
+        return
 
-    # some validations
-    unless input[1].toLowerCase() in ['xbox', 'playstation']
-      res.reply "Please use 'xbox' or 'playstation' as your network."
-      return
-
-    unless input[2].indexOf('-') is -1
-      idx = input[2].indexOf('-')
-      modifier = input[2].slice(idx)
-      input[2] = input[2].slice(0, idx)
-      showDetails = true if modifier is "-details"
-    unless input[2].toLowerCase() in ['primary', 'special', 'heavy']
-      res.reply "Please use 'primary', 'special', or 'heavy' for the weapon slot."
+    unless input[2].toLowerCase() in ['primary', 'special', 'secondary', 'heavy']
+      robot.send {room: res.message.user.name, "unfurl_media": false}, "Please use 'primary', 'special', or 'heavy' for the weapon slot. Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
       return
 
     data = generateInputHash(input)
 
-    getPlayerId(res, data.membershipType, data.displayName).then (playerId) ->
+    getPlayerId(res, data.membershipType, data.displayName, robot).then (playerId) ->
       getCharacterId(res, data.membershipType, playerId).then (characterId) ->
         getItemIdFromSummary(res, data.membershipType, playerId, characterId, data.weaponSlot).then (itemInstanceId) ->
           getItemDetails(res, data.membershipType, playerId, characterId, itemInstanceId).then (item) ->
-            parsedItem = dataHelper.parseItemAttachment(item, showDetails)
+            parsedItem = dataHelper.parseItemAttachment(item)
 
             payload =
               message: res.message
@@ -51,7 +51,7 @@ generateInputHash = (input) ->
   name = if network is '1' then input[0].replace("_", " ") else input[0]
   if input[2] is 'primary'
     wpnSlot = 1
-  else if input[2] is 'special'
+  else if input[2] in ['special', 'secondary']
     wpnSlot = 2
   else
     wpnSlot = 3
@@ -64,16 +64,16 @@ generateInputHash = (input) ->
 
 
 # Gets general player information from a players gamertag
-getPlayerId = (bot, membershipType, displayName) ->
+getPlayerId = (res, membershipType, displayName, robot) ->
   deferred = new Deferred()
   endpoint = "SearchDestinyPlayer/#{membershipType}/#{displayName}"
   networkName = if membershipType is '1' then 'xbox' else 'playstation'
 
-  makeRequest bot, endpoint, (response) ->
+  makeRequest res, endpoint, (response) ->
     foundData = response[0]
 
     if !foundData
-      bot.send "Could not find guardian with name: #{displayName} on #{networkName}"
+      robot.send {room: res.message.user.name}, "Could not find guardian with name: #{displayName} on #{networkName}"
       deferred.reject()
       return
 

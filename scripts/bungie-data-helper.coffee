@@ -26,12 +26,9 @@ class DataHelper
     itemName: itemDefs.itemName
     itemDescription: itemDefs.itemDescription
     itemTypeName: itemDefs.itemTypeName
-    rarity: itemDefs.tierTypeName
     color: damageColor[damageTypeName] or '#d9d9d9'
     iconLink: prefix + iconSuffix
     itemLink: prefix + itemSuffix
-    primaryStat: item.primaryStat
-    stats: item.stats
     nodes: response.data.talentNodes
     nodeDefs: response.definitions.talentGrids[item.talentGridHash].nodes
     damageType: damageTypeName
@@ -39,13 +36,10 @@ class DataHelper
   'parseItemsForAttachment': (items) ->
     items.map (item) => @parseItemAttachment(item)
 
-  'parseItemAttachment': (item, showDetails) ->
-    hasStats = item.stats
+  'parseItemAttachment': (item) ->
     name = "#{item.itemName}"
     name+= " [#{item.damageType}]" unless item.damageType is "Kinetic"
-    statFields = if hasStats then @buildStats(item.stats, item.primaryStat) else []
     filtered = @filterNodes(item.nodes, item.nodeDefs)
-    nodeFields = @buildFields(filtered, item.nodeDefs)
     textHash = @buildText(filtered, item.nodeDefs)
     formattedText = for column, string of textHash
       # removes trailing " | " from each line
@@ -57,30 +51,6 @@ class DataHelper
     color: item.color
     text: formattedText.join('\n')
     thumb_url: item.iconLink
-    fields: nodeFields if showDetails is true
-
-  'buildStats': (statsData, primaryData) ->
-    defs = @statDefs
-
-    foundStats = statsData.map (stat) ->
-      found = defs[stat.statHash]
-      return if not found
-
-      title: found.statName
-      value: stat.value
-      short: true
-
-    primaryFound = primaryData and defs[primaryData.statHash]
-
-    if primaryFound
-      primaryStat =
-        title: primaryFound.statName
-        value: primaryData.value
-        short: false
-
-      foundStats.unshift(primaryStat)
-
-    foundStats.filter (x) -> x
 
   # removes invalid nodes, orders according to column attribute
   'filterNodes': (nodes, nodeDefs) ->
