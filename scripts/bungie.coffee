@@ -122,65 +122,6 @@ getItemDetails = (bot, membershipType, playerId, characterId, itemInstanceId) ->
   makeRequest(bot, endpoint, callback, params)
   deferred.promise
 
-# Gets Inventory of last played character
-# getCharacterInventory = (bot, membershipType, playerId, characterId) ->
-#   deferred = new Deferred()
-#   endpoint = "#{membershipType}/Account/#{playerId}/Character/#{characterId}/Inventory"
-#   params = 'definitions=true'
-#
-#   callback = (response) ->
-#     definitions = response.definitions.items
-#     equippable = response.data.buckets.Equippable
-#
-#     validItems = equippable.map (x) ->
-#       x.items.filter (item) ->
-#         item.isEquipped and item.primaryStat
-#
-#     itemsData = [].concat validItems...
-#
-#     items = itemsData.map (item) -> dataHelper.serializeFromApi(item, definitions)
-#
-#     deferred.resolve(items)
-#
-#   makeRequest(bot, endpoint, callback, params)
-#   deferred.promise
-
-# Gets genral information about last played character
-# getLastCharacter = (bot, playerId) ->
-#   deferred = new Deferred()
-#   endpoint = '/1/Account/'+playerId
-#   genderTypes = ['Male', 'Female', 'Unknown']
-#   raceTypes = ['Human', 'Awoken', 'Exo', 'Unknown']
-#   classTypes = ['Titan', 'Hunter', 'Warlock', 'Unknown']
-#
-#   makeRequest bot, endpoint, (response) ->
-#     data = response.data
-#     chars = data.characters
-#     recentChar = chars[0]
-#     charData = recentChar.characterBase
-#     levelData = recentChar.levelProgression
-#
-#     level = levelData.level
-#     lightLevel = charData.powerLevel
-#     gender = genderTypes[charData.genderType]
-#     charClass = classTypes[charData.classType]
-#
-#     phrase = 'level '+level+' '+gender+' '+charClass+', with a light level of: '+lightLevel
-#     deferred.resolve(phrase)
-#
-#   deferred.promise
-
-# Gets a players vendors
-# getXurInventory = (bot) ->
-#   deferred = new Deferred()
-#   endpoint = 'Advisors/Xur'
-#   params = 'definitions=true'
-#   callback = (response) ->
-#     deferred.resolve(response)
-#
-#   makeRequest(bot, endpoint, callback, params)
-#   deferred.promise
-
 # Sends GET request from an endpoint, needs a success callback
 makeRequest = (bot, endpoint, callback, params) ->
   BUNGIE_API_KEY = process.env.BUNGIE_API_KEY

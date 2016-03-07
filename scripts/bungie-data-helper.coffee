@@ -8,13 +8,6 @@ class DataHelper
       @vendorDefs = JSON.parse(body)
 
   'serializeFromApi': (response) ->
-    # rarityColor =
-    #   Uncommon: '#f5f5f5'
-    #   Common: '#2f6b3c'
-    #   Rare: '#557f9e'
-    #   Legendary: '#4e3263'
-    #   Exotic: '#ceae32'
-
     damageColor =
       Kinetic: '#d9d9d9'
       Arc: '#80b3ff'
