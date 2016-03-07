@@ -15,7 +15,7 @@ The standard usage looks like this:
 
 with a response looking like:  
 ![image](https://cloud.githubusercontent.com/assets/11082871/13578078/cebbf29e-e463-11e5-8e66-9971eb844c4f.png)  
-Showoff automatically looks at your **your most recently played character** when grabbing the weapon data.  
+Showoff automatically looks at **your most recently played character** when grabbing the weapon data.  
 
 ### Advanced Options
 If your slack **username** (not first/last name) is the same as your gamertag, you can omit this entirely.  
