@@ -24,3 +24,4 @@ If your slack **username** (not first/last name) is the same as your gamertag, y
 ### Caveats
 * Xbox users must use an underscore ( _ ) for any spaces in their gamertags.
 * As stated above, Showoff automatically looks at your most recently played character. This was ultimately an intentional decision to limit the number of inputs needed and simplify using the bot.
+* If you've recently equipped a new weapon, the bot may fail to retrieve the info properly. For best results, wait 10-15 seconds before using the bot.
