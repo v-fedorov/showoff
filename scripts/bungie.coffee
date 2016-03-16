@@ -11,20 +11,20 @@ module.exports = (robot) ->
   robot.respond /(.*)/i, (res) ->
     input = res.match[1].split ' '
 
-    # tries to make sense of various combinations of 2 inputs
+    # defaults to slack username
     if input.length is 2
-      xbox = ['xbox', 'xb1', 'xbox1', 'xboxone', 'xbox360', 'xb360', 'xbone']
-      playstation = ['playstation', 'ps', 'ps3', 'ps4', 'playstation3', 'playstation4']
-      sanitized = input[0].toLowerCase().replace(" ", "")
-      if sanitized in xbox
-        input[0] = 'xbox'
-        input.unshift(res.message.user.name)
-      else if sanitized in playstation
-        input[0] = 'playstation'
-        input.unshift(res.message.user.name)
-      else
-        robot.send {room: res.message.user.name, "unfurl_media": false}, "Something went wrong... Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
-        return
+      input[0].unshift(res.message.user.name)
+
+    xbox = ['xbox', 'xb1', 'xbox1', 'xboxone', 'xbox360', 'xb360', 'xbone']
+    playstation = ['playstation', 'ps', 'ps3', 'ps4', 'playstation3', 'playstation4']
+    sanitized = input[1].toLowerCase().replace(" ", "")
+    if sanitized in xbox
+      input[1] = 'xbox'
+    else if sanitized in playstation
+      input[1] = 'playstation'
+    else
+      robot.send {room: res.message.user.name, "unfurl_media": false}, "Something went wrong... Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
+      return
 
     unless input[2].toLowerCase() in ['primary', 'special', 'secondary', 'heavy']
       robot.send {room: res.message.user.name, "unfurl_media": false}, "Please use 'primary', 'special', or 'heavy' for the weapon slot. Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
@@ -48,7 +48,7 @@ module.exports = (robot) ->
 # takes an input (array) and returns a hash
 generateInputHash = (input) ->
   network = if input[1] is 'xbox' then '1' else '2'
-  name = if network is '1' then input[0].replace("_", " ") else input[0]
+  name = if network is '1' then input[0].split("_").join(" ") else input[0]
   if input[2] is 'primary'
     wpnSlot = 1
   else if input[2] in ['special', 'secondary']
