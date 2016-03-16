@@ -11,23 +11,30 @@ module.exports = (robot) ->
   robot.respond /(.*)/i, (res) ->
     input = res.match[1].split ' '
 
+    unless input.length is (2 or 3)
+      message = "Something didn't look right... Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
+      sendError(robot, res, message)
+      return
+
     # defaults to slack username
     if input.length is 2
       input.unshift(res.message.user.name)
 
     xbox = ['xbox', 'xb1', 'xbox1', 'xboxone', 'xbox360', 'xb360', 'xbone']
     playstation = ['playstation', 'ps', 'ps3', 'ps4', 'playstation3', 'playstation4']
-    sanitized = input[1].toLowerCase().replace(" ", "")
+    sanitized = input[1].toLowerCase()
     if sanitized in xbox
       input[1] = 'xbox'
     else if sanitized in playstation
       input[1] = 'playstation'
     else
-      robot.send {room: res.message.user.name, "unfurl_media": false}, "Something went wrong... Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
+      message = "I didn't recognize the second input, try 'xbox' or 'playstation'. Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
+      sendError(robot, res, message)
       return
 
     unless input[2].toLowerCase() in ['primary', 'special', 'secondary', 'heavy']
-      robot.send {room: res.message.user.name, "unfurl_media": false}, "Please use 'primary', 'special', or 'heavy' for the weapon slot. Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
+      message = "Please use 'primary', 'special', or 'heavy' for the weapon slot. Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
+      sendError(robot, res, message)
       return
 
     data = generateInputHash(input)
@@ -62,6 +69,9 @@ generateInputHash = (input) ->
     weaponSlot: wpnSlot
   }
 
+# Sends error message as DM in slack
+sendError = (robot, res, message) ->
+  robot.send {room: res.message.user.name, "unfurl_media": false}, message
 
 # Gets general player information from a players gamertag
 getPlayerId = (res, membershipType, displayName, robot) ->
