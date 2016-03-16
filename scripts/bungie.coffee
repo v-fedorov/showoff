@@ -11,7 +11,7 @@ module.exports = (robot) ->
   robot.respond /(.*)/i, (res) ->
     input = res.match[1].split ' '
 
-    unless input.length is (2 or 3)
+    unless input.length is 2 or input.length is 3
       message = "Something didn't look right... Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
       sendError(robot, res, message)
       return
