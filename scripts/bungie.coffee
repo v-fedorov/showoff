@@ -13,7 +13,7 @@ module.exports = (robot) ->
 
     # defaults to slack username
     if input.length is 2
-      input[0].unshift(res.message.user.name)
+      input.unshift(res.message.user.name)
 
     xbox = ['xbox', 'xb1', 'xbox1', 'xboxone', 'xbox360', 'xb360', 'xbone']
     playstation = ['playstation', 'ps', 'ps3', 'ps4', 'playstation3', 'playstation4']
