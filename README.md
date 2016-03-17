@@ -21,6 +21,9 @@ Showoff automatically looks at **your most recently played character** when grab
 If your slack **username** (not first/last name) is the same as your gamertag, you can omit this entirely.  
 >@bot-name xbox special
 
+### Testing it out
+If you want to test out the bot before using it in a public channel, try sending it a direct message. You do not need "@bot-name" when you are messaging the bot directly, just the inputs. The bot will still default to using your slack username when only 2 inputs are sent in a direct message.
+
 ### Caveats
 * Xbox users must use an underscore ( _ ) for any spaces in their gamertags.
 * As stated above, Showoff automatically looks at your most recently played character. This was ultimately an intentional decision to limit the number of inputs needed and simplify using the bot.
