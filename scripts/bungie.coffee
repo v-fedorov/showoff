@@ -9,7 +9,11 @@ module.exports = (robot) ->
 
   # executes when any text is directed at the bot
   robot.respond /(.*)/i, (res) ->
-    input = res.match[1].split ' '
+    array = res.match[1].split ' '
+
+    # trims spaces and removes empty elements in array
+    input = []
+    input.push el.trim() for el in array when (el.trim() isnt "")
 
     unless input.length is 2 or input.length is 3
       message = "Something didn't look right... Read more about using the bot here:\nhttps://github.com/phillipspc/showoff/blob/master/README.md"
