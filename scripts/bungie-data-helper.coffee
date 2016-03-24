@@ -50,6 +50,7 @@ class DataHelper
     title_link: item.itemLink
     color: item.color
     text: formattedText.join('\n')
+    mrkdwn_in: ["text"]
     thumb_url: item.iconLink
 
   # removes invalid nodes, orders according to column attribute
@@ -95,8 +96,11 @@ class DataHelper
     setText = (node) ->
       step = nodeDefs[node.nodeIndex].steps[node.stepIndex]
       column = nodeDefs[node.nodeIndex].column
+      name = step.nodeStepName
+      if node.isActivated
+        name = '_*' + step.nodeStepName + '*_'
       text[column] = "" unless text[column]
-      text[column]+= "#{step.nodeStepName} | "
+      text[column]+= name + " | "
 
     setText node for node in nodes
     return text
